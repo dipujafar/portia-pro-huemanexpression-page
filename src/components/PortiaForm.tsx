@@ -1,5 +1,4 @@
-"use client";
-
+"use client";;
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -14,12 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import logoImage from "@/assets/portia-page/portia-logo.png";
 import Image from "next/image";
 import CountryStateCitySelector from "@/components/ui/country-state-city-selector";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -34,7 +34,7 @@ const formSchema = z.object({
   product: z.string().min(2, {
     message: "Product must be at least 2 characters.",
   }),
-  quantity: z.number().min(1, {
+  quantity: z.string().min(1, {
     message: "Quantity must be at least 1.",
   }),
   country: z.string().min(2, {
@@ -52,6 +52,7 @@ const formSchema = z.object({
 });
 
 export function PortiaForm() {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,8 +65,42 @@ export function PortiaForm() {
 
   const { setValue, control, register } = form;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+
+    console.log(values)
+    // const formattedData = {
+    //   price: 60,
+    //   payload: {
+    //     name: "John Doe",
+    //     email: "john.doe@example.com",
+    //     company: "Doe Enterprises",
+    //     phone: "+1-555-123-4567",
+    //     address: "123 Main Street, Springfield, USA",
+    //     quantity: 2,
+    //   },
+    // };
+    // setLoading(true);
+    // try {
+    //   const res = await fetch(
+    //     "https://api.huemanexpressions.com/api/v1/payments/create-portia-payment-session",
+    //     {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(formattedData),
+    //     }
+    //   );
+
+    //   if (!res.ok) throw new Error("Request failed");
+
+    //   const data: { message: string; data: unknown } = await res.json();
+    //   setLoading(false)
+    //   console.log(data);
+    // } catch (err) {
+    //   console.error(err);
+    //   setLoading(false)
+    // }
+
+    // console.log(values);
     // Handle form submission here
   }
 
@@ -206,7 +241,11 @@ export function PortiaForm() {
                       <FormItem>
                         <FormLabel>Quantity</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Quantity" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Quantity"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -280,10 +319,14 @@ export function PortiaForm() {
               </div>
 
               <Button
+              disabled={loading}
                 type="submit"
                 className="w-full bg-[#684B3C] hover:bg-[#806355]"
               >
                 Continue to Payment
+                {
+                  loading && <span><Loader2 className="animate-spin" /></span>
+                }
               </Button>
             </form>
           </Form>
