@@ -63,44 +63,43 @@ export function PortiaForm() {
     },
   });
 
-  const { setValue, control, register } = form;
+  const { setValue, control, register, formState } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
-    console.log(values)
-    // const formattedData = {
-    //   price: 60,
-    //   payload: {
-    //     name: "John Doe",
-    //     email: "john.doe@example.com",
-    //     company: "Doe Enterprises",
-    //     phone: "+1-555-123-4567",
-    //     address: "123 Main Street, Springfield, USA",
-    //     quantity: 2,
-    //   },
-    // };
-    // setLoading(true);
-    // try {
-    //   const res = await fetch(
-    //     "https://api.huemanexpressions.com/api/v1/payments/create-portia-payment-session",
-    //     {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(formattedData),
-    //     }
-    //   );
+    const formattedData = {
+      price: 60,
+      payload: {
+        name: values.firstName + " " + values.lastName,
+        email: "john.doe@example.com",
+        company: "Doe Enterprises",
+        phone: "+1-555-123-4567",
+        address: "123 Main Street, Springfield, USA",
+        quantity: 2,
+      },
+    };
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "https://api.huemanexpressions.com/api/v1/payments/create-portia-payment-session",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formattedData),
+        }
+      );
 
-    //   if (!res.ok) throw new Error("Request failed");
+      if (!res.ok) throw new Error("Request failed");
 
-    //   const data: { message: string; data: unknown } = await res.json();
-    //   setLoading(false)
-    //   console.log(data);
-    // } catch (err) {
-    //   console.error(err);
-    //   setLoading(false)
-    // }
+      const data: { message: string; data: unknown } = await res.json();
+      setLoading(false)
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+      setLoading(false)
+    }
 
-    // console.log(values);
+    console.log(values);
     // Handle form submission here
   }
 
@@ -223,6 +222,7 @@ export function PortiaForm() {
                     control={control}
                     setValue={setValue}
                     register={register}
+
                   />
                 </div>
               </div>
