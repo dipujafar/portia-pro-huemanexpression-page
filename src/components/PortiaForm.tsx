@@ -20,6 +20,8 @@ import CountryStateCitySelector from "@/components/ui/country-state-city-selecto
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -37,6 +39,9 @@ const formSchema = z.object({
   quantity: z.string().min(1, {
     message: "Quantity must be at least 1.",
   }),
+  company: z.string().min(2, {
+    message: "Company must be at least 2 characters.",
+  }),
   country: z.string().min(2, {
     message: "Country must be at least 2 characters.",
   }),
@@ -53,6 +58,7 @@ const formSchema = z.object({
 
 export function PortiaForm() {
   const [loading, setLoading] = useState(false);
+  const route = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,12 +76,12 @@ export function PortiaForm() {
     const formattedData = {
       price: 60,
       payload: {
-        name: values.firstName + " " + values.lastName,
-        email: "john.doe@example.com",
-        company: "Doe Enterprises",
-        phone: "+1-555-123-4567",
-        address: "123 Main Street, Springfield, USA",
-        quantity: 2,
+        name: values?.firstName + " " + values?.lastName,
+        email: values?.email,
+        company: values?.company,
+        phone: values?.phoneNumber,
+        address: values?.city + ", " + values?.state + ", " + values?.country,
+        quantity: Number(values?.quantity),
       },
     };
     setLoading(true);
@@ -91,15 +97,20 @@ export function PortiaForm() {
 
       if (!res.ok) throw new Error("Request failed");
 
-      const data: { message: string; data: unknown } = await res.json();
+      const data: { message: string; data: { url: string } } = await res.json();
       setLoading(false)
-      console.log(data);
+    
+
+      if(data?.data){
+        route.push(data?.data?.url);
+      }
     } catch (err) {
-      console.error(err);
+      alert("Something went wrong. Please try again.");
+      
       setLoading(false)
     }
 
-    console.log(values);
+   
     // Handle form submission here
   }
 
@@ -185,7 +196,7 @@ export function PortiaForm() {
                 <div className="mb-4">
                   <FormField
                     control={form.control}
-                    name="firstName"
+                    name="company"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Company</FormLabel>
