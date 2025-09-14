@@ -77,7 +77,7 @@ export default function CountryStateCitySelector({
 
   return (
     <div className="space-y-3">
-      <div className="grid w-full grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-3">
+      <div className="grid w-full grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-2 mt-2">
         <div>
           <Controller
             name="country"
@@ -158,7 +158,7 @@ export default function CountryStateCitySelector({
           )}
         </div>
 
-        <div>
+        <div className="col-span-2">
           {selectedState ? (
             <>
               <Controller

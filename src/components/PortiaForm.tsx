@@ -74,7 +74,7 @@ export function PortiaForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
     const formattedData = {
-      price: 60,
+      price: 60 * Number(values?.quantity),
       payload: {
         name: values?.firstName + " " + values?.lastName,
         email: values?.email,
@@ -274,7 +274,7 @@ export function PortiaForm() {
                         <div className="size-4 bg-[#806355] rounded-full flex-shrink-0 my-1 gap-x-2  "></div>{" "}
                         <div>
                           <div className="font-medium text-[#806355] flex items-center gap-x-2 text-lg ">
-                            Hue-man Expression Visuals for Portia Pro users. #1
+                            Hue-man Expression Visuals for Portia Pro users.
                           </div>
                         </div>
                         <div className="text-2xl font-bold text-gray-900 md:ml-4">
