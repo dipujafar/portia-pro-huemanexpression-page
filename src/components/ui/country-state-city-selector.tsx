@@ -72,6 +72,7 @@ export default function CountryStateCitySelector({
       setValue("country", userAddress.country);
       setValue("state", userAddress.state);
       setValue("city", userAddress.city);
+      setValue("streetAddress", userAddress.address);
     }
   }, [userAddress?.country]);
 

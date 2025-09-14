@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -21,7 +21,13 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -33,9 +39,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  product: z.string().min(2, {
-    message: "Product must be at least 2 characters.",
-  }),
+
   quantity: z.string().min(1, {
     message: "Quantity must be at least 1.",
   }),
@@ -51,8 +55,14 @@ const formSchema = z.object({
   city: z.string().min(2, {
     message: "City must be at least 2 characters.",
   }),
-  phoneNumber: z.string().min(2, {
-    message: "Phone number must be at least 2 characters.",
+  streetAddress: z.string().min(1, {
+    message: "Street address Required.",
+  }),
+  zipCode: z.string().min(1, {
+    message: "Zip code Required.",
+  }),
+  phoneNumber: z.string().min(1, {
+    message: "Phone number Required.",
   }),
 });
 
@@ -65,13 +75,13 @@ export function PortiaForm() {
       firstName: "",
       lastName: "",
       email: "",
-      product: "hue-man-expression-visuals",
     },
   });
 
-  const { setValue, control, register, formState } = form;
+  const { setValue, control, register } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
 
     const formattedData = {
       price: 60 * Number(values?.quantity),
@@ -80,11 +90,21 @@ export function PortiaForm() {
         email: values?.email,
         company: values?.company,
         phone: values?.phoneNumber,
-        address: values?.city + ", " + values?.state + ", " + values?.country,
+        address:
+          values?.streetAddress +
+          ", " +
+          values?.city +
+          ", " +
+          values?.state +
+          ", " +
+          values?.country +
+          ", " +
+          values?.zipCode,
         quantity: Number(values?.quantity),
       },
     };
     setLoading(true);
+
     try {
       const res = await fetch(
         "https://api.huemanexpressions.com/api/v1/payments/create-portia-payment-session",
@@ -98,19 +118,17 @@ export function PortiaForm() {
       if (!res.ok) throw new Error("Request failed");
 
       const data: { message: string; data: { url: string } } = await res.json();
-      setLoading(false)
-    
+      setLoading(false);
 
-      if(data?.data){
+      if (data?.data) {
         route.push(data?.data?.url);
       }
     } catch (err) {
       alert("Something went wrong. Please try again.");
-      
-      setLoading(false)
+
+      setLoading(false);
     }
 
-   
     // Handle form submission here
   }
 
@@ -233,7 +251,6 @@ export function PortiaForm() {
                     control={control}
                     setValue={setValue}
                     register={register}
-
                   />
                 </div>
               </div>
@@ -251,13 +268,26 @@ export function PortiaForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Quantity</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Quantity"
-                            {...field}
-                          />
-                        </FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a quantity" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {[...Array(10)].map((_, index) => (
+                              <SelectItem
+                                key={index}
+                                value={(index + 1).toString()}
+                              >
+                                {index + 1}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -284,60 +314,19 @@ export function PortiaForm() {
                     </Label>
                   </div>
                 </div>
-
-                {/* <FormField
-                  control={form.control}
-                  name="product"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="space-y-2"
-                        >
-                          <div className="border border-gray-200 rounded-lg p-4">
-                            <div className="flex items-center space-x-3">
-                              <RadioGroupItem
-                                value="hue-man-expression-visuals"
-                                id="hue-man-expression-visuals"
-                              />
-                              <Label
-                                htmlFor="hue-man-expression-visuals"
-                                className="flex-1 cursor-pointer"
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <div className="font-medium text-[#806355] flex items-center gap-x-2 text-lg">
-                                      <div className="size-4 bg-[#806355] rounded-full"></div>{" "}
-                                      Hue-man Expression Visuals for Portia Pro
-                                      users. #1
-                                    </div>
-                                  </div>
-                                  <div className="text-2xl font-bold text-gray-900 ml-4">
-                                    $60.00
-                                  </div>
-                                </div>
-                              </Label>
-                            </div>
-                          </div>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
 
               <Button
-              disabled={loading}
+                disabled={loading}
                 type="submit"
                 className="w-full bg-[#684B3C] hover:bg-[#806355]"
               >
                 Continue to Payment
-                {
-                  loading && <span><Loader2 className="animate-spin" /></span>
-                }
+                {loading && (
+                  <span>
+                    <Loader2 className="animate-spin" />
+                  </span>
+                )}
               </Button>
             </form>
           </Form>
