@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -43,27 +44,15 @@ const formSchema = z.object({
   quantity: z.string().min(1, {
     message: "Quantity must be at least 1.",
   }),
-  company: z.string().min(2, {
-    message: "Company must be at least 2 characters.",
+  company: z.string().min(1, {
+    message: "Company name Required.",
   }),
-  country: z.string().min(2, {
-    message: "Country must be at least 2 characters.",
-  }),
-  state: z.string().min(2, {
-    message: "State must be at least 2 characters.",
-  }),
-  city: z.string().min(2, {
-    message: "City must be at least 2 characters.",
-  }),
-  streetAddress: z.string().min(1, {
-    message: "Street address Required.",
-  }),
-  zipCode: z.string().min(1, {
-    message: "Zip code Required.",
-  }),
-  phoneNumber: z.string().min(1, {
-    message: "Phone number Required.",
-  }),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  streetAddress: z.string().optional(),
+  zipCode: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 export function PortiaForm() {
@@ -81,7 +70,20 @@ export function PortiaForm() {
   const { setValue, control, register } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    if (!values?.phoneNumber) {
+      toast.error("Please enter a valid phone number.");
+      return;
+    }
+    if (
+      !values?.country ||
+      !values?.state ||
+      !values?.city ||
+      !values?.streetAddress ||
+      !values?.zipCode
+    ) {
+      toast.error("Please fill all the address details fields.");
+      return;
+    }
 
     const formattedData = {
       price: 60 * Number(values?.quantity),
@@ -278,7 +280,7 @@ export function PortiaForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {[...Array(10)].map((_, index) => (
+                            {[...Array(100)].map((_, index) => (
                               <SelectItem
                                 key={index}
                                 value={(index + 1).toString()}
