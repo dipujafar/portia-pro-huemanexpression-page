@@ -297,7 +297,7 @@ export function PortiaForm() {
                 </div>
 
                 <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3 space-y-3">
                     <Label
                       htmlFor="hue-man-expression-visuals"
                       className="flex-1 cursor-pointer"
@@ -305,15 +305,16 @@ export function PortiaForm() {
                       <div className="flex flex-col md:flex-row justify-between items-start gap-2">
                         <div className="size-4 bg-[#806355] rounded-full flex-shrink-0 my-1 gap-x-2  "></div>{" "}
                         <div>
-                          <div className="font-medium text-[#806355] flex items-center gap-x-2 text-lg ">
+                          <div className="font-medium text-[#806355] flex items-center gap-x-2 text-lg  ">
                             Hue-man Expression Visuals for Portia Pro users.
                           </div>
                         </div>
-                        <div className="text-2xl font-bold text-gray-900 md:ml-4">
-                          $60.00
-                        </div>
                       </div>
                     </Label>
+                  </div>
+                  <div className="text-xl font-semibold text-gray-900 md:ml-4 flex ">
+                    $60.00{" "} 
+                    <span className="text-sm font-medium "> {" "} /  per provider</span>
                   </div>
                 </div>
               </div>
